@@ -71,7 +71,9 @@ class Server {
         Server() {};
         ClientList _clientList;
         sockaddr_in6 _serverSocket;
-        int _serverSocketId, _clientSocketId;
+        sockaddr_storage _clientAddressStorage;
+        socklen_t _clientAddressLength;
+        int _serverSocketId;
         unsigned _addrLen;
 
 

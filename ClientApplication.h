@@ -13,7 +13,7 @@ public:
 	int runApplication(int,char**);
 
 private:
-	const static bool _logging = false;
+	const static bool _logging = true;
 	ServerMediator _mediator;
 	std::string getClientInput();
 	long long convertTime(std::string);

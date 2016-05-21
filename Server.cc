@@ -11,6 +11,8 @@ using namespace TP1;
 const unsigned MAX_NUM_CONNECTIONS = 7;
 const unsigned MAX_BUF = 101;
 
+
+//Sets up UDP server
 void Server::setUp(string port) {
 
     //helper variable to check for errors
@@ -19,7 +21,7 @@ void Server::setUp(string port) {
         cout << "Binding server..." << endl;
     }
     
-    _serverSocketId = socket(AF_INET6, SOCK_STREAM, 0);
+    _serverSocketId = socket(AF_INET6, SOCK_DGRAM, 0);
     
     if (_serverSocketId < 0) {
         cout << "ERROR setting up socket" << endl;
@@ -33,8 +35,7 @@ void Server::setUp(string port) {
     _serverSocket.sin6_port = htons(stoi(port));
     _serverSocket.sin6_addr = in6addr_any;
 
-
-    _addrLen = sizeof(_clientSocketId);
+    _clientAddressLength = sizeof(_clientAddressStorage);
 
     returnCode = bind(_serverSocketId, (sockaddr*) &_serverSocket, sizeof(_serverSocket));
     if (returnCode < 0 ) {
@@ -43,8 +44,8 @@ void Server::setUp(string port) {
         exit(1);
     }
 
-    //Listens to MAX_NUM_CONNECTIONS at most 
-    listen(_serverSocketId, MAX_NUM_CONNECTIONS );
+    //No need to listen to anything because ... THIS IS SPARTAAAAAA (I mean UDP...)
+    //listen(_serverSocketId, MAX_NUM_CONNECTIONS );
 }
 
 void Server::closeConnection(int clientId) {
@@ -54,6 +55,7 @@ void Server::closeConnection(int clientId) {
 
     //TODO - remove client from _clientList (in the future)
     
+    //TODO - below line is not necessary in 
     sendMessageToClient(clientId, "-1");
     close(clientId);
 
@@ -62,24 +64,13 @@ void Server::closeConnection(int clientId) {
     }
 }
 
-int Server::acceptClient() {
-    if (LOGGING) {
-        cout << "Waiting for client" << endl;
-    }
-    
-    _clientSocketId = accept(_serverSocketId, (sockaddr*) &_clientSocketId, &_addrLen );
 
-    //TODO - Implement and return the Client object in the near future
-    //For now, the server only takes one client at a time, so no need
-    //for it. An int will suffice
-    
-    if (LOGGING) {
-        cout << "Client accepted..." << endl;
-    }
-
-    return _clientSocketId;
-}
-
+/*****************************************
+* Accepts a UDP packet from anyone,
+* and stores it in _clientAddressStorage.
+* Fianlly returns the message as a string.
+*
+******************************************/
 string Server::getMessageFromClient(int clientId) {
     if (LOGGING) {
         cout << "Waiting for client message" << endl;
@@ -87,7 +78,7 @@ string Server::getMessageFromClient(int clientId) {
 
     char msg[MAX_BUF];
     
-    recv(clientId,msg,MAX_BUF, 0);
+    recvfrom(_serverSocketId,msg,MAX_BUF, 0, (sockaddr*)&_clientAddressStorage, &_clientAddressLength);
 
     if (LOGGING) {
         cout << "Got client message: " << msg << endl;
@@ -103,5 +94,8 @@ void Server::sendMessageToClient(int clientId, string message) {
         cout << "Sending message to client: " << message << "." << endl;
     }
 
-   send(clientId, message.c_str(), message.size()+1, 0); 
+   if (sendto(_serverSocketId, message.c_str(), message.size()+1, 0,(sockaddr*)&_clientAddressStorage,_clientAddressLength) < 0) {
+        cout << "I can't send message back to client. I give up!" << endl;
+        exit(1);
+   } 
 }

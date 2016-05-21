@@ -24,9 +24,9 @@ int ClientApplication::runApplication(int argc, char** argv) {
 	if (_logging) cout << "Starting Client Application" << endl;
     if (_logging) cout << "Number of arguments: " << argc << endl;
     
-	connectionFlag = _mediator.connectToServer(addr.c_str(), stoul(port));
-    if (connectionFlag != 0 ) {
-        cout << "ERROR! Could not connect to server at " << addr <<  ":" << port << endl;
+	connectionFlag = _mediator.setUpServerSocket(addr.c_str(), stoul(port));
+    if (connectionFlag < 0 ) {
+        cout << "ERROR! Could not open socket " << addr <<  ":" << port << endl;
         exit(1);
     }
 

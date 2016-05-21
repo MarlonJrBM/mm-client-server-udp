@@ -20,13 +20,13 @@ namespace TP1{
 class ServerMediator {
 public:
 	int connectToServer(std::string,unsigned);
+	int setUpServerSocket(std::string, unsigned);
 	void closeConnection();
     std::string  getResponse();
 	void sendRequest(std::string);
 
 private:
-	const static bool _logging = false;
-    struct sockaddr_in6 _serverSocket; 
+	const static bool _logging = true;
     int _serverSocketId;
     addrinfo* _result;
 

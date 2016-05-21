@@ -5,7 +5,7 @@
 
 namespace TP1 {
 
-const bool LOGGING = false;
+const bool LOGGING = true;
 
 class ServerApplication {
 

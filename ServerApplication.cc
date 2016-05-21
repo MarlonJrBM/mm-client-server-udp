@@ -36,10 +36,12 @@ int ServerApplication::runApp(int argc, char** argv) {
 
     //Server's main loop
     while (true) {
-
+        
+        //TODO - Remove commented code below
         //Below calls are blocking, will wait until
         //Client connects and send their time in the race
-        curClient = server->acceptClient();
+        //curClient = server->acceptClient(); // NO NEED ANYMORE BECAUSE IT'S UDP
+
         do {
             clientMessage = server->getMessageFromClient(curClient);
             isValid = isValidMessage(clientMessage);
