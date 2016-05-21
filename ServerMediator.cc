@@ -117,7 +117,7 @@ int ServerMediator::setUpServerSocket(string addr, unsigned port) {
 ************************************/
 void ServerMediator::closeConnection() {
 	if (_logging) {
-		cout << "Closing connection" << endl;
+		cout << "Closing connection (UDP-wise)" << endl;
 	}
 
     if (_result != NULL) {

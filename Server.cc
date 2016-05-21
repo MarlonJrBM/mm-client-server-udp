@@ -55,9 +55,8 @@ void Server::closeConnection(int clientId) {
 
     //TODO - remove client from _clientList (in the future)
     
-    //TODO - below line is not necessary in 
+    //TODO - below line is not necessary in UDP
     sendMessageToClient(clientId, "-1");
-    close(clientId);
 
     if (LOGGING) {
         cout << "Client is out" << endl;

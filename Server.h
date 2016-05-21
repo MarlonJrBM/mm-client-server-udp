@@ -39,11 +39,7 @@ class Server {
             if (_serverInstance->_serverSocketId != -1) {
                 close(_serverInstance->_serverSocketId);
             }
-
-            if (_serverInstance->_clientSocketId != -1) {
-                close(_serverInstance->_clientSocketId);
-            }
-
+            
             if (_serverInstance != NULL) {
                 delete _serverInstance;
             }

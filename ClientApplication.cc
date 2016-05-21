@@ -47,8 +47,10 @@ int ClientApplication::runApplication(int argc, char** argv) {
 		//sends converted time to server
 		_mediator.sendRequest(clientTime);
 
-		//gets position back from server and display it on screen
-		displayResponse(_mediator.getResponse());
+		if (convertedTime >= 0) {
+			//gets position back from server and display it on screen 
+			displayResponse(_mediator.getResponse());
+		} 
 
 	} while (convertedTime >= 0);
 
