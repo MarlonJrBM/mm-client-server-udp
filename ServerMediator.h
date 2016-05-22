@@ -29,7 +29,6 @@ private:
 	const static bool _logging = true;
     int _serverSocketId;
     addrinfo* _result;
-
 };
 
 

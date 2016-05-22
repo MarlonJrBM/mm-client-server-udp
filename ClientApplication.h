@@ -19,6 +19,7 @@ private:
 	long long convertTime(std::string);
 	void displayResponse(std::string);
 	bool isValidMessage(std::string);
+	void insertSeqNum(int, std::string&);
 
 
 };

@@ -10,16 +10,18 @@
 using namespace std;
 using namespace TP1;
 
-/**
- * Client's application main loop
- *
- * */
+/******************************************************************************
+ * Client's application main loop. Messages are verified in a stop-and-wait
+ * fashion.
+ *******************************************************************************/
 int ClientApplication::runApplication(int argc, char** argv) {
-	string clientTime = "";
+	string clientMessage = "";
+	string serverResponse = "";
 	long long convertedTime = 0;
     string addr = argv[1];
     string port = argv[2];
     int connectionFlag = -1;
+    bool seqNum = 0;
 
 	if (_logging) cout << "Starting Client Application" << endl;
     if (_logging) cout << "Number of arguments: " << argc << endl;
@@ -31,26 +33,31 @@ int ClientApplication::runApplication(int argc, char** argv) {
     }
 
 	do {
-		clientTime = getClientInput();
+		clientMessage = getClientInput();
 
 		//This does basic client-side input verification
 		//If user doesn't send a valid time, it won't be sent
 		//to server
-		if (isValidMessage(clientTime)) { 
-			convertedTime = stoll(clientTime);
+		if (isValidMessage(clientMessage)) { 
+			convertedTime = stoll(clientMessage);
 		} else {
 			cout << "Invalid message!" << endl; 
 			convertedTime = 0;
 			continue;
 		}
 
-		//sends converted time to server
-		_mediator.sendRequest(clientTime);
+		//appends sequence number
+		insertSeqNum(seqNum, clientMessage);
 
-		if (convertedTime >= 0) {
-			//gets position back from server and display it on screen 
-			displayResponse(_mediator.getResponse());
-		} 
+		//sends converted time to server
+		_mediator.sendRequest(clientMessage);
+
+		//gets answer from server and displays it
+		serverResponse = _mediator.getResponse();
+		displayResponse(serverResponse);
+
+		//toggles seqNum
+		seqNum = !seqNum;
 
 	} while (convertedTime >= 0);
 
@@ -72,17 +79,28 @@ void ClientApplication::displayResponse(string position) {
 }
 
 string ClientApplication::getClientInput() {
-	string clientTime;
+	string clientMessage;
 	if (_logging) {
 		cout << "Please type your time" << endl;
 	}
-	getline(cin, clientTime);
-	return clientTime;
+	getline(cin, clientMessage);
+	return clientMessage;
 }
 
-/**
+/******************************************************************************
 * A valid message is a message which starts with a digit
-**/
+*******************************************************************************/
 bool ClientApplication::isValidMessage(string message) {
 	return strtoll(message.c_str(), NULL, 10);
+}
+
+/******************************************************************************
+* Modifies message inserting seqNum into it.
+*******************************************************************************/
+void ClientApplication::insertSeqNum(int seqNum, string& message) {
+	message = "[" + to_string(seqNum) + "]" + message;
+
+	if (_logging) {
+		cout << "Message with seqNum is: " << message << endl;
+	}
 }

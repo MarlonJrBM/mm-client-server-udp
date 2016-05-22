@@ -48,15 +48,18 @@ void Server::setUp(string port) {
     //listen(_serverSocketId, MAX_NUM_CONNECTIONS );
 }
 
-void Server::closeConnection(int clientId) {
+/**********************************************
+* Sends closing signal to client whose address
+* is specified in _clientAddressStorage.
+***********************************************/
+void Server::closeConnection() {
     if (LOGGING) {
         cout << "Closing connection to client..." << endl;
     }
 
     //TODO - remove client from _clientList (in the future)
     
-    //TODO - below line is not necessary in UDP
-    sendMessageToClient(clientId, "-1");
+    sendMessageToClient("-1");
 
     if (LOGGING) {
         cout << "Client is out" << endl;
@@ -70,7 +73,7 @@ void Server::closeConnection(int clientId) {
 * Fianlly returns the message as a string.
 *
 ******************************************/
-string Server::getMessageFromClient(int clientId) {
+string Server::getMessageFromClient() {
     if (LOGGING) {
         cout << "Waiting for client message" << endl;
     }
@@ -87,8 +90,12 @@ string Server::getMessageFromClient(int clientId) {
 
 }
 
-
-void Server::sendMessageToClient(int clientId, string message) {
+/*****************************************
+* Sends message to client whose address is 
+* stored in _clientAddressStorage.
+*
+******************************************/
+void Server::sendMessageToClient(string message) {
     if (LOGGING) {
         cout << "Sending message to client: " << message << "." << endl;
     }

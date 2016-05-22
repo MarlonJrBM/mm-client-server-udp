@@ -54,12 +54,12 @@ class Server {
         //Accepts a client, adds it to _clientList (TODO), and returns a reference to it
         int acceptClient();
 
-        void sendMessageToClient(int, std::string);
+        void sendMessageToClient(std::string);
 
-        std::string getMessageFromClient(int);
+        std::string getMessageFromClient();
 
-        //Closes connection to client and removes him/her from _clientList
-        void closeConnection(int);
+        //Closes connection to client stored in _clientAddressStorage
+        void closeConnection();
 
     
     private:
