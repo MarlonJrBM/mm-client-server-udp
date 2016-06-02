@@ -2,9 +2,7 @@
 #define RANKING_H
 
 #include <set>
-
-#include "ClientInterface.h"
-
+#include <string>
 
 namespace TP1 {
 
