@@ -19,16 +19,16 @@ namespace TP1{
  * */
 class ServerMediator {
 public:
-	int connectToServer(std::string,unsigned);
-	int setUpServerSocket(std::string, unsigned);
+	int setUpSocket(std::string, unsigned);
 	void closeConnection();
-    std::string  getResponse();
+    std::string  getResponse(unsigned timeout = 0);
 	void sendRequest(std::string);
 
 private:
 	const static bool _logging = true;
     int _serverSocketId;
     addrinfo* _result;
+    unsigned _numTimeouts;
 };
 
 

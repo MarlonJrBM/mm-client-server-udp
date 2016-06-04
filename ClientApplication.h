@@ -15,6 +15,7 @@ public:
 private:
 	const static bool _logging = true;
 	ServerMediator _mediator;
+	unsigned _numTimeouts;
 	std::string getClientInput();
 	long long convertTime(std::string);
 	void displayResponse(std::string);

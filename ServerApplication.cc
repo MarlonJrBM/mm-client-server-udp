@@ -17,11 +17,12 @@ int ServerApplication::runApp(int argc, char** argv) {
     string clientMessage = "";
     string position = "";
     string port = argv[1];
-    bool isValid = false, isClosingMessage = false;
+    bool isClosingMessage = false;
 
     //Flags for STOP-AND-WAIT
     bool curSeqNum = 0;
-    _expectedSeqNum = 0; 
+    _expectedSeqNum = 0;
+    _lastSentMessage = "";
     
     if (LOGGING) {
         cout << "Starting server!" << endl;
@@ -47,39 +48,73 @@ int ServerApplication::runApp(int argc, char** argv) {
         do {
             clientMessage = server->getMessageFromClient();
             curSeqNum = extractSeqNum(clientMessage);
-            isValid = isValidMessage(clientMessage);
-
-            //First, we'll check if client sends a valid message
-            if (!isValid) {
-                server->sendMessageToClient("0");
-                isClosingMessage = false; //We'll keep taking request from user
-                continue;
-            }
-
-            //TODO - we check the sequence number
-
-            //Checks if client wants to close connection
             isClosingMessage = isClosingSignal(clientMessage);
+
+            //Accepts closing message, regardless of sequence number
             if (isClosingMessage) {
                 _timeRanking->clear();
                 server->closeConnection();
-             } else {
+                _lastSentMessage = "-1";
 
+                //here we reset the sequence number because we might be getting a new client after this one
+                _expectedSeqNum = 0; 
+                continue;
+            }
+
+            //STOP-N-WAIT Protocol:
+            //Let us check the sequence number!
+            if (curSeqNum != _expectedSeqNum) {
+
+                if (LOGGING) {
+                    cout << "Sequence number did NOT match!" << endl;
+                    cout << "Resending last message: " << _lastSentMessage << endl;
+                }
+
+                //Sequence number is not the expected one
+                //Resends last message
+                if (_lastSentMessage != "") {
+                    server->sendMessageToClient(_lastSentMessage);
+                }
+
+            } else { /* sequence number is the one expected, proceed as usual*/
+
+                if (LOGGING) {
+                    cout << "Sequence number MATCH!" << endl;
+                }
+
+                //First, we'll check if client sends a valid message
+                //This is just a basic server-side input validation
+                if (!isValidMessage(clientMessage)) {
+                    server->sendMessageToClient("0");
+                    _lastSentMessage = "0";
+                    isClosingMessage = false; //We'll keep taking requests from user
+
+                    //toggling sequence Number
+                    _expectedSeqNum = !_expectedSeqNum;
+                    continue;
+                }
+                
                 //Will handle user request, sending his/her
                 //position back
-                 position = _timeRanking->insert(clientMessage);
-                 cout << position << endl;
-                 server->sendMessageToClient(position);
-             }
+                position = _timeRanking->insert(clientMessage);
+                cout << position << endl;
+                server->sendMessageToClient(position);
+                _lastSentMessage = position;
 
-        } while (!isClosingMessage);
-    
-    }
-    
+                //toggling sequence Number
+                _expectedSeqNum = !_expectedSeqNum;
+               
+           }
+
+
+       } while (!isClosingMessage);
+
+   }
+
     //Will never reach below lines in single-threaded version
-    server->stop();
+   server->stop();
 
-    return 0;
+   return 0;
 
 }
 
@@ -108,29 +143,29 @@ bool ServerApplication::isValidMessage(string message) {
 ******************************************************************************/
 bool ServerApplication::extractSeqNum(string& message) {
     int firstBracket = message.find('[');
-    int secondBracket = message.find(']');
+        int secondBracket = message.find(']');
 
     //If we don't find a square bracket in the message, this was sent
     //without a sequence number, so we just return the expected one.
-    if (firstBracket == -1 || secondBracket == -1) {
-        return _expectedSeqNum;
-    }
+        if (firstBracket == -1 || secondBracket == -1) {
+            return _expectedSeqNum;
+        }
 
-    string seqNumStr = message.substr(firstBracket + 1,secondBracket - firstBracket);
-    int seqNum = stoi(seqNumStr);
+        string seqNumStr = message.substr(firstBracket + 1,secondBracket - firstBracket);
+        int seqNum = stoi(seqNumStr);
 
     //Removes sequence number tokens from message and returns sequence number;
-    message = message.substr(secondBracket + 1, -1);
-    if (LOGGING) {
-        cout << "Message without sequence number: " << message << endl;
-        cout << "Sequence number: " << seqNum << endl;
+        message = message.substr(secondBracket + 1, -1);
+        if (LOGGING) {
+            cout << "Message without sequence number: " << message << endl;
+            cout << "Sequence number: " << seqNum << endl;
+        }
+        return seqNum;
     }
-    return seqNum;
-}
 
-ServerApplication::~ServerApplication() {
-    Server::deleteInstance();
-    if (!_timeRanking) delete(_timeRanking);
-    
-}
+    ServerApplication::~ServerApplication() {
+        Server::deleteInstance();
+        if (!_timeRanking) delete(_timeRanking);
+
+    }
 

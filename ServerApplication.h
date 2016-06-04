@@ -19,13 +19,14 @@ private:
 
     bool isClosingSignal(std::string);
 
-    long long convertMessageToTime(std::string);
-
     bool isValidMessage(std::string);
 
     bool extractSeqNum(std::string&);
 
     bool _expectedSeqNum;
+
+    std::string _lastSentMessage;
+
 	
 };
 
