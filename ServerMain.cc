@@ -4,10 +4,10 @@
 
 
 using namespace std;
-using namespace TP1;
+using namespace TP2;
 
 
 int main(int argc, char** argv) {
     ServerApplication app;
-    return app.runApp(argc, argv);
+    return app.runApplication(argc, argv);
 }

@@ -5,13 +5,11 @@
 #include <string>
 #include <regex>
 
-#include "StringManip.h"
+#include "tp2_constants.h"
 
 using namespace std;
-using namespace TP1;
+using namespace TP2;
 
-const unsigned int TIMEOUT = 2; //timeout is 2 seconds
-const unsigned int MAX_NUM_TIMEOUTS = 10;
 
 /******************************************************************************
  * Client's application main loop. Messages are verified in a stop-and-wait
@@ -27,8 +25,8 @@ int ClientApplication::runApplication(int argc, char** argv) {
     bool seqNum = 0;
     _numTimeouts = 0;
 
-	if (_logging) cout << "Starting Client Application" << endl;
-    if (_logging) cout << "Number of arguments: " << argc << endl;
+	if (LOGGING) cout << "Starting Client Application" << endl;
+    if (LOGGING) cout << "Number of arguments: " << argc << endl;
     
 	connectionFlag = _mediator.setUpSocket(addr.c_str(), stoul(port));
     if (connectionFlag < 0 ) {
@@ -60,7 +58,7 @@ int ClientApplication::runApplication(int argc, char** argv) {
 
 		//Keep on sending this message if a TIMEOUT occurs
 		while ((serverResponse =_mediator.getResponse(TIMEOUT)) == "TIMEOUT" ) {
-			if (_logging) {
+			if (LOGGING) {
 				cout << "TIMEOUT! Resending message..." << endl;
 			}
 			if (++_numTimeouts == MAX_NUM_TIMEOUTS) {
@@ -77,18 +75,18 @@ int ClientApplication::runApplication(int argc, char** argv) {
 
 	} while (convertedTime >= 0);
 
-	_mediator.closeConnection();
+	_mediator.cleanUp();
 
 	return 0;
 }
 
-void ClientApplication::displayResponse(string position) {
+void ClientApplication::displayResponse(const string& message) {
 
-    if (stoll(position) >= 0) {
-	    cout << position << endl;
+    if (stoll(message) >= 0) {
+	    cout << message << endl;
     } else {
         //Server is ending connection
-        if (_logging) {
+        if (LOGGING) {
             cout << "Exiting client" << endl;
         }
     }
@@ -96,7 +94,7 @@ void ClientApplication::displayResponse(string position) {
 
 string ClientApplication::getClientInput() {
 	string clientMessage;
-	if (_logging) {
+	if (LOGGING) {
 		cout << "Please type your time" << endl;
 	}
 	getline(cin, clientMessage);
@@ -106,7 +104,7 @@ string ClientApplication::getClientInput() {
 /******************************************************************************
 * A valid message is a message which starts with a digit
 *******************************************************************************/
-bool ClientApplication::isValidMessage(string message) {
+bool ClientApplication::isValidMessage(const string& message) {
 	return strtoll(message.c_str(), NULL, 10);
 }
 
@@ -116,7 +114,7 @@ bool ClientApplication::isValidMessage(string message) {
 void ClientApplication::insertSeqNum(int seqNum, string& message) {
 	message = "[" + to_string(seqNum) + "]" + message;
 
-	if (_logging) {
+	if (LOGGING) {
 		cout << "Message with seqNum is: " << message << endl;
 	}
 }

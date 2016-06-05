@@ -7,10 +7,10 @@
 #include <algorithm>
 
 #include "ServerApplication.h"
-#include "StringManip.h"
+#include "tp2_constants.h"
 
 using namespace std;
-using namespace TP1;
+using namespace TP2;
 
 
 void Ranking::clear() {
@@ -21,7 +21,7 @@ void Ranking::clear() {
 }
 
 
-string Ranking::insert(string s) {
+string Ranking::insert(const string& s) {
 
     if (LOGGING) {
         cout << "Inserting message into ranking" << endl;

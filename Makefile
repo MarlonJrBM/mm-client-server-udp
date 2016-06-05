@@ -12,10 +12,13 @@ $(BIN_0):
 $(BIN_1):
 	make -f server.mk
 
+doc:
+	doxygen Doxyfile
 
 clean:
 	make clean -f client.mk
 	make clean -f server.mk
+	-rm -rf doc
 
 depend:
 	make depend -f client.mk

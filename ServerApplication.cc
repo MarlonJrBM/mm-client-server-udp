@@ -2,16 +2,17 @@
 
 #include <iostream>
 
-#include "Server.h"
+#include "UDPServer.h"
 #include "Ranking.h"
-#include "ClientInterface.h"
+#include "tp2_constants.h"
 
 using namespace std;
-using namespace TP1;
+using namespace TP2;
 
-Server* Server::_serverInstance = NULL;
 
-int ServerApplication::runApp(int argc, char** argv) {
+UDPServer* UDPServer::_serverInstance = NULL;
+
+int ServerApplication::runApplication(int argc, char** argv) {
 
     //Local and helper variables
     string clientMessage = "";
@@ -30,7 +31,7 @@ int ServerApplication::runApp(int argc, char** argv) {
         cout << "Press ctrl + c at anytime to exit" << endl;
     }
 
-    Server* server = Server::getInstance();
+    UDPServer* server = UDPServer::getInstance();
 
     //Sets up server configuration and structures
     server->setUp(port);
@@ -118,10 +119,7 @@ int ServerApplication::runApp(int argc, char** argv) {
 
 }
 
-/** 
-* A closing signal is a negative number which the client sends 
-**/
-bool ServerApplication::isClosingSignal(string message) {
+bool ServerApplication::isClosingSignal(const string& message) {
     int signal = stoi(message);
 
     if (signal < 0) 
@@ -130,17 +128,10 @@ bool ServerApplication::isClosingSignal(string message) {
         return false;
 }
 
-/**
-* A valid message is a message which starts with a digit
-**/
-bool ServerApplication::isValidMessage(string message) {
+bool ServerApplication::isValidMessage(const string& message) {
     return strtoll(message.c_str(), NULL, 10);
 }
 
-/******************************************************************************
-* Extracts sequence number from message. If no sequence number can be found,
-* returns expectedSeqNum (what an optimistic server! =) )
-******************************************************************************/
 bool ServerApplication::extractSeqNum(string& message) {
     int firstBracket = message.find('[');
         int secondBracket = message.find(']');
@@ -161,11 +152,11 @@ bool ServerApplication::extractSeqNum(string& message) {
             cout << "Sequence number: " << seqNum << endl;
         }
         return seqNum;
-    }
+}
 
-    ServerApplication::~ServerApplication() {
-        Server::deleteInstance();
+ServerApplication::~ServerApplication() {
+        UDPServer::deleteInstance();
         if (!_timeRanking) delete(_timeRanking);
 
-    }
+}
 

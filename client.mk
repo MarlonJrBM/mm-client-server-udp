@@ -10,7 +10,7 @@ _BIN = cliente
 #Folder where source files reside. Must exist.
 #Leave . for current folder
 SRC_DIR = .
-_SRC = ClientMain.cc ClientApplication.cc ServerMediator.cc
+_SRC = ClientMain.cc ClientApplication.cc UDPServerMediator.cc
 
 #Folder where object files will reside. 
 #Will be created if it doesn't exist.
@@ -42,7 +42,7 @@ OBJ = $(patsubst %, $(OBJ_DIR)/%, $(_OBJ))
 DEPFILE = .clientDeps
 
 ifeq ($(DEBUG),1)
-	CXXFLAGS += -g
+	CXXFLAGS += -g -DDEBUG
 else
 	CXXFLAGS += -O2
 endif

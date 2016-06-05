@@ -1,20 +1,20 @@
-#include "ServerMediator.h"
+#include "UDPServerMediator.h"
 
 #include <iostream>
 #include <cstdio>
+#include "tp2_constants.h"
 
 using namespace std;
-using namespace TP1;
+using namespace TP2;
 
-const unsigned int MAX_BUF = 101;
 
 /*******************************************************
 * Opens socket to server based on
 * addr and port. This is a UDP connection.
 * Returns the _serverSocketId that was setup.
 *******************************************************/
-int ServerMediator::setUpSocket(string addr, unsigned port) {
-    if (_logging) {
+int UDPServerMediator::setUpSocket(const string& addr, unsigned port) {
+    if (LOGGING) {
         cout << "Setting binding to server up at: " << addr << ":" << port << endl;
     }
     //Variables used to determine address (IPv4 vs IPv6)
@@ -62,8 +62,8 @@ int ServerMediator::setUpSocket(string addr, unsigned port) {
 * 
 * 
 ************************************/
-void ServerMediator::closeConnection() {
-	if (_logging) {
+void UDPServerMediator::cleanUp() {
+	if (LOGGING) {
 		cout << "Closing connection (UDP-wise)" << endl;
 	}
 
@@ -84,8 +84,8 @@ void ServerMediator::closeConnection() {
 * If a timeout has occurred, will return
 * the string "TIMEOUT"
 ************************************/
-string ServerMediator::getResponse(unsigned timeout) {
-	if (_logging) {
+string UDPServerMediator::getResponse(unsigned timeout) {
+	if (LOGGING) {
 		cout << "Waiting response from server..." << endl;
 	}
 
@@ -110,12 +110,12 @@ string ServerMediator::getResponse(unsigned timeout) {
 * (as long long int)
 *
 ************************************/
-void ServerMediator::sendRequest(string clientTime) {
-	if (_logging) {
-		cout << "Sending request to server: " << clientTime << endl;
+void UDPServerMediator::sendRequest(const string& message) {
+	if (LOGGING) {
+		cout << "Sending request to server: " << message << endl;
 	}
    
-    if (sendto(_serverSocketId,clientTime.c_str(), clientTime.size()+1,0,_result->ai_addr, _result->ai_addrlen) < 0) {
+    if (sendto(_serverSocketId,message.c_str(), message.size()+1,0,_result->ai_addr, _result->ai_addrlen) < 0) {
         cout << "Error sending request. I give up!" << endl;
         exit(1);
     };

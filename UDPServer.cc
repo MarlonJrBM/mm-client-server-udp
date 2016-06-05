@@ -1,19 +1,15 @@
-#include "Server.h"
+#include "UDPServer.h"
 
 #include <iostream>
 
-#include "ClientInterface.h"
 #include "ServerApplication.h"
+#include "tp2_constants.h"
 
 using namespace std;
-using namespace TP1;
-
-const unsigned MAX_NUM_CONNECTIONS = 7;
-const unsigned MAX_BUF = 101;
+using namespace TP2;
 
 
-//Sets up UDP server
-void Server::setUp(string port) {
+void UDPServer::setUp(const string& port) {
 
     //helper variable to check for errors
     int returnCode = -1; 
@@ -48,11 +44,7 @@ void Server::setUp(string port) {
     //listen(_serverSocketId, MAX_NUM_CONNECTIONS );
 }
 
-/**********************************************
-* Sends closing signal to client whose address
-* is specified in _clientAddressStorage.
-***********************************************/
-void Server::closeConnection() {
+void UDPServer::closeConnection() {
     if (LOGGING) {
         cout << "Closing connection to client..." << endl;
     }
@@ -67,13 +59,7 @@ void Server::closeConnection() {
 }
 
 
-/*****************************************
-* Accepts a UDP packet from anyone,
-* and stores it in _clientAddressStorage.
-* Fianlly returns the message as a string.
-*
-******************************************/
-string Server::getMessageFromClient() {
+string UDPServer::getMessageFromClient() {
     if (LOGGING) {
         cout << "Waiting for client message" << endl;
     }
@@ -90,12 +76,8 @@ string Server::getMessageFromClient() {
 
 }
 
-/*****************************************
-* Sends message to client whose address is 
-* stored in _clientAddressStorage.
-*
-******************************************/
-void Server::sendMessageToClient(string message) {
+
+void UDPServer::sendMessageToClient(const string& message) {
     if (LOGGING) {
         cout << "Sending message to client: " << message << "." << endl;
     }
